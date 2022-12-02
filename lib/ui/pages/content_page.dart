@@ -20,6 +20,15 @@ class _State extends State<ContentPage> {
     _textController = TextEditingController();
     controller = Get.find();
     // TODO: Obten los ToDos de la base de datos y actualiza el estado
+    controller.initialize().then(
+          (_) => controller.getAll().then(
+            (value) {
+              setState(() {
+                controller.toDos = value;
+              });
+            },
+          ),
+        );
   }
 
   @override
@@ -52,6 +61,12 @@ class _State extends State<ContentPage> {
                         // TODO: 1. Guarda el todo en ToDoService.
                         // TODO: 2. Guarda el todo en todos.
                         // TODO: 3. Actualiza el estado.
+                        controller.saveToDo(toDo: toDo).then((_) {
+                          setState(() {
+                            _textController.clear();
+                            controller.toDos.add(toDo);
+                          });
+                        });
                       },
                       child: const Text("Aceptar"))
                 ],
@@ -79,6 +94,11 @@ class _State extends State<ContentPage> {
                               // TODO: 1. Actualiza el toDo en ToDoService.
                               // TODO: 2. Actualiza el toDo en todos.
                               // TODO: 3. Actualiza el estado.
+                              controller.updateToDo(toDo: toDo).then((_) {
+                                setState(() {
+                                  controller.toDos[index]=toDo;
+                                });
+                              });
                             },
                           ),
                         ),
@@ -88,6 +108,11 @@ class _State extends State<ContentPage> {
                             // TODO: 1. Elimina el toDo de ToDoService.
                             // TODO: 2. Elimina el toDo de todos.
                             // TODO: 3. Actualiza el estado.
+                          controller.deleteToDo(toDo: toDo).then((_){
+                            setState(() {
+                              controller.toDos.removeAt(index);
+                            });
+                          });
                           },
                           icon: const Icon(
                             Icons.delete_forever_rounded,
@@ -105,6 +130,12 @@ class _State extends State<ContentPage> {
           // TODO: 1. Elimina los ToDOs de ToDoService.
           // TODO: 2. Limpia todos
           // TODO: 3. Actualiza el estado.
+          controller.deleteAll().then((_) {
+            setState(() {
+              controller.toDos.clear();
+            });
+          });
+
         },
       ),
     );
